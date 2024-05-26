@@ -1,5 +1,5 @@
 from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.corpus import twitter_samples, stopwords, gutenberg, movie_reviews, reuters
+from nltk.corpus import twitter_samples, stopwords, gutenberg, movie_reviews, reuters, opinion_lexicon
 from nltk.tag import pos_tag
 from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk import FreqDist, classify, NaiveBayesClassifier
@@ -122,6 +122,30 @@ def try_again():
                 negative_reuters_data.append(remove_noise(tokens, stop_words))
 
         return positive_reuters_data, negative_reuters_data
+    
+    def preprocess_opinion_lexicon():
+        stop_words = stopwords.words('english')
+        positive_opinion_lexicon_data = []
+        negative_opinion_lexicon_data = []
+
+        positive_words = opinion_lexicon.positive()
+        negative_words = opinion_lexicon.negative()
+
+        positive_text = " ".join(positive_words)
+        negative_text = " ".join(negative_words)
+
+        positive_sentences = sent_tokenize(positive_text)
+        negative_sentences = sent_tokenize(negative_text)
+
+        for sentence in positive_sentences:
+            tokens = word_tokenize(sentence)
+            positive_opinion_lexicon_data.append(remove_noise(tokens, stop_words))
+
+        for sentence in negative_sentences:
+            tokens = word_tokenize(sentence)
+            negative_opinion_lexicon_data.append(remove_noise(tokens, stop_words))
+
+        return positive_opinion_lexicon_data, negative_opinion_lexicon_data
 
     if (__name__ == "__main__"):
 
@@ -129,6 +153,7 @@ def try_again():
         gutenberg_positive_cleansed_tokens, gutenberg_negative_cleansed_tokens = preprocess_gutenberg()
         movie_positive_cleansed_tokens, movie_negative_cleansed_tokens = preprocess_movie_reviews()
         reuters_positive_cleansed_tokens, reuters_negative_cleansed_tokens = preprocess_reuters_reviews()
+        opinion_lexicon_positive_cleansed_tokens, opinion_lexicon_negative_cleansed_tokens = preprocess_opinion_lexicon()
 
         positive_cleansed_tokens_list.extend(twitter_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(twitter_negative_cleansed_tokens)
@@ -138,6 +163,8 @@ def try_again():
         negative_cleansed_tokens_list.extend(movie_negative_cleansed_tokens)
         positive_cleansed_tokens_list.extend(reuters_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(reuters_negative_cleansed_tokens)
+        positive_cleansed_tokens_list.extend(opinion_lexicon_positive_cleansed_tokens)
+        negative_cleansed_tokens_list.extend(opinion_lexicon_negative_cleansed_tokens)
 
         all_pos_words = get_all_words(positive_cleansed_tokens_list)
 
