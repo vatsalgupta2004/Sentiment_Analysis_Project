@@ -1,3 +1,9 @@
+# download all corpuses
+# import nltk
+# nltk.download("all")
+
+# importing all required modules and functions 
+import nltk
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import twitter_samples, stopwords, gutenberg, movie_reviews, reuters, opinion_lexicon
 from nltk.tag import pos_tag
@@ -8,6 +14,7 @@ from prettytable import PrettyTable
 from project_code_logos import logo2
 import timeit, datetime
 
+# main source-code
 def try_again():
     global content_try_store
     # initialising positive and negative cleansed token lists
@@ -167,9 +174,19 @@ def try_again():
         negative_cleansed_tokens_list.extend(opinion_lexicon_negative_cleansed_tokens)
 
         all_pos_words = get_all_words(positive_cleansed_tokens_list)
+        all_neg_words = get_all_words(negative_cleansed_tokens_list)
 
-        freq_dist_pos = FreqDist(all_pos_words)
-        # print(freq_dist_pos.most_common(30))
+        # freq_dist_pos = FreqDist(all_pos_words)
+        ptext = nltk.Text(all_pos_words)
+        freq_dist_pos = ptext.vocab()
+        print(freq_dist_pos.most_common(30))
+
+        print(" ")
+        
+        # freq_dist_neg = FreqDist(all_neg_words)
+        ntext = nltk.Text(all_neg_words)
+        freq_dist_neg = ntext.vocab()
+        print(freq_dist_neg.most_common(30))
 
         positive_tokens_for_model = get_tweets_for_model(positive_cleansed_tokens_list)
         negative_tokens_for_model = get_tweets_for_model(negative_cleansed_tokens_list)

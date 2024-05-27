@@ -1,1 +1,5 @@
-Sentiment Analysis Data 
+
+2024-05-27 12:32:36.184746
+1) you should visit america --> Positive
+2) you should not visit america --> Positive
+3) visit america --> Positive
