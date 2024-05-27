@@ -21,10 +21,10 @@ def try_again():
     positive_cleansed_tokens_list = []
     negative_cleansed_tokens_list = []
     # removing noise from data
-    def remove_noise(tweet_tokens, stop_words = ()):
+    def remove_noise(data_tokens, stop_words = ()):
         cleansed_tokens = []
 
-        for token, tag in pos_tag(tweet_tokens):
+        for token, tag in pos_tag(data_tokens):
             token = re.sub("(@[A-Za-z0-9_]+|#[A-Za-z0-9_]+|https?://\S+)","", token)
             # @[A-Za-z0-9_] removes @
             # #[A-Za-z0-9_] removes #
@@ -41,39 +41,44 @@ def try_again():
             else: # if no match then adjectives default
                 pos = 'a'
 
+            # used to lematize or we could say to reduce the word to its base form (eg. running to run)
             lemmatizer = WordNetLemmatizer()
             token = lemmatizer.lemmatize(token, pos)
 
+            # if token not empty, not have punctuation, is lowercase and should not have stop words
             if len(token) > 0 and token not in string.punctuation and token.lower() not in stop_words:
                 cleansed_tokens.append(token.lower())
         return cleansed_tokens
 
+    # extract words using generator function from the parameterised list for frequency distribution in this model list type [[x,y,z],[a,b,c],[d,e,f],...]
     def get_all_words(cleansed_tokens_list):
         for tokens in cleansed_tokens_list:
             for token in tokens:
                 yield token
 
-    def get_tweets_for_model(cleansed_tokens_list):
-        for tweet_tokens in cleansed_tokens_list:
-            yield dict([token, True] for token in tweet_tokens)
+    # defining a generator function which instead of producing all dictionary at a single time it produces one dictionary at a time and saves data and resumes it from there only, it is more efficient in large datasets
+    def get_data_for_model(cleansed_tokens_list):
+        for data_tokens in cleansed_tokens_list:
+            yield dict([token, True] for token in data_tokens)
 
+    # defining Twitter_samples corpus and using appropiate rules and functions to extract desired data from it
     def preprocess_twitter_X():
         stop_words = stopwords.words('english')
-
-        positive_tweet_tokens = twitter_samples.tokenized('positive_tweets.json')
-        negative_tweet_tokens = twitter_samples.tokenized('negative_tweets.json')
-
         positive_cleansed_tokens_list = []
         negative_cleansed_tokens_list = []
 
-        for tokens in positive_tweet_tokens:
+        positive_data_tokens = twitter_samples.tokenized('positive_tweets.json')
+        negative_data_tokens = twitter_samples.tokenized('negative_tweets.json')
+
+        for tokens in positive_data_tokens:
             positive_cleansed_tokens_list.append(remove_noise(tokens, stop_words))
 
-        for tokens in negative_tweet_tokens:
+        for tokens in negative_data_tokens:
             negative_cleansed_tokens_list.append(remove_noise(tokens, stop_words))
 
         return positive_cleansed_tokens_list, negative_cleansed_tokens_list
 
+    # defining gutenberg corpus and using appropiate rules and functions to extract desired data from it
     def preprocess_gutenberg():
         stop_words = stopwords.words('english')
         positive_gutenberg_list = []
@@ -95,6 +100,7 @@ def try_again():
 
         return positive_gutenberg_list, negative_gutenberg_list
     
+    # defining movie_reviews corpus and using appropiate rules and functions to extract desired data from it
     def preprocess_movie_reviews():
         stop_words = stopwords.words('english')
         positive_reviews_data = []
@@ -110,6 +116,7 @@ def try_again():
 
         return positive_reviews_data, negative_reviews_data
     
+    # defining reuters corpus and using appropiate rules and functions to extract desired data from it
     def preprocess_reuters_reviews():
         stop_words = stopwords.words('english')
         positive_reuters_data = []
@@ -130,6 +137,7 @@ def try_again():
 
         return positive_reuters_data, negative_reuters_data
     
+    # defining opinion_lexicon corpus and using appropiate rules and functions to extract desired data from it
     def preprocess_opinion_lexicon():
         stop_words = stopwords.words('english')
         positive_opinion_lexicon_data = []
@@ -154,55 +162,68 @@ def try_again():
 
         return positive_opinion_lexicon_data, negative_opinion_lexicon_data
 
+    # defining and extracting lists from each corpus function and appending it to a common list
     if (True): # __name__ == "__main__"
-
+        
+        # return extraction from each corpus function
+        
+        # twitter_samples
         twitter_positive_cleansed_tokens, twitter_negative_cleansed_tokens = preprocess_twitter_X()
-
+        # gutenberg
         gutenberg_positive_cleansed_tokens, gutenberg_negative_cleansed_tokens = preprocess_gutenberg()
-
+        # movie_reviews
         movie_positive_cleansed_tokens, movie_negative_cleansed_tokens = preprocess_movie_reviews()
-
+        # reuters
         reuters_positive_cleansed_tokens, reuters_negative_cleansed_tokens = preprocess_reuters_reviews()
-
+        # opinion_lexicon
         opinion_lexicon_positive_cleansed_tokens, opinion_lexicon_negative_cleansed_tokens = preprocess_opinion_lexicon()
 
+        # extending individual corpus lists to an common list for dataset creation 
+        
+        # twitter_samples
         positive_cleansed_tokens_list.extend(twitter_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(twitter_negative_cleansed_tokens)
-
+        # gutenberg
         positive_cleansed_tokens_list.extend(gutenberg_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(gutenberg_negative_cleansed_tokens)
-
+        # movie_reviews
         positive_cleansed_tokens_list.extend(movie_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(movie_negative_cleansed_tokens)
-
+        # reuters
         positive_cleansed_tokens_list.extend(reuters_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(reuters_negative_cleansed_tokens)
-
+        # opinion_lexicon
         positive_cleansed_tokens_list.extend(opinion_lexicon_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(opinion_lexicon_negative_cleansed_tokens)
 
+        # to create a frequency distribution of most frequently occurring tokens or text or words 
         all_pos_words = get_all_words(positive_cleansed_tokens_list)
         all_neg_words = get_all_words(negative_cleansed_tokens_list)
 
+        # positive token's frequecy
         # freq_dist_pos = FreqDist(all_pos_words)
         ptext = nltk.Text(all_pos_words)
         freq_dist_pos = ptext.vocab()
         print(freq_dist_pos.most_common(30))
 
         print(" ")
-        
+
+        # negative token's frequecy
         # freq_dist_neg = FreqDist(all_neg_words)
         ntext = nltk.Text(all_neg_words)
         freq_dist_neg = ntext.vocab()
         print(freq_dist_neg.most_common(30))
 
-        positive_tokens_for_model = get_tweets_for_model(positive_cleansed_tokens_list)
-        negative_tokens_for_model = get_tweets_for_model(negative_cleansed_tokens_list)
+        # positive_tokens_for_model is assumed to be an iterable containing dictionaries where each dictionary represents a tokenized piece of text data, with each token as a key and True as its value
+        positive_tokens_for_model = get_data_for_model(positive_cleansed_tokens_list)
+        negative_tokens_for_model = get_data_for_model(negative_cleansed_tokens_list)
 
-        positive_dataset = [(tweet_dict, "Positive") for tweet_dict in positive_tokens_for_model]
-        negative_dataset = [(tweet_dict, "Negative") for tweet_dict in negative_tokens_for_model]
+        # each dictionary data_dict, a tuple (data_dict, "Positive") is created. This tuple contains the dictionary itself (data_dict) and the label either postive and negative
+        positive_dataset = [(data_dict, "Positive") for data_dict in positive_tokens_for_model]
+        negative_dataset = [(data_dict, "Negative") for data_dict in negative_tokens_for_model]
 
-        dataset = positive_dataset + negative_dataset
+        # combining both the sentiment_dataset
+        dataset =(positive_dataset + negative_dataset)
 
         # used random modules shuffle function to jumble the dataset values with same size as initially it was
         random.shuffle(dataset)
@@ -210,6 +231,7 @@ def try_again():
         # slice the dataset for faster comparisons as dataset is now smaller
         # 80:20 ratio is  for optimal accuracy
         # 93:7 ratio is  for best accuracy
+        #manipulating dataset and its size
         desired_size_data = len(dataset)
         dataset = dataset[0:desired_size_data]
         size_data = len(dataset)
@@ -218,13 +240,16 @@ def try_again():
         train_data = dataset[0:index_data]
         test_data = dataset[index_data:size_data]
 
+        # It is based on Bayes' theorem with the "naive" assumption of independence between features
+        # classifier learns the underlying patterns in the train_data
+        # classifier object returned which encapsulates the learned model 
         classifier = NaiveBayesClassifier.train(train_data)
 
-        # size of dataset, accuracy, and some most informative features
+        # size of dataset, accuracy, and some most informative features n number of words that occur most number of times
         print(" ")
         print(f"Size of dataset taken is {size_data}")
         print("Accuracy is:", classify.accuracy(classifier, test_data))
-        (classifier.show_most_informative_features(10))
+        (classifier.show_most_informative_features(30))
 
         # taking input from end_user how about how many texts to be entered and what those texts are 
         user_sentences=[]
@@ -246,8 +271,7 @@ def try_again():
             print(f"\nSentence:--> {sentence}")
             print(f"Sentiment Type:--> {classifier.classify(dict([token, True] for token in custom_tokens))}")
             with open(file="sentiment_analysis_data.txt",mode="a") as data:
-                data.write(f"\n{num_file+1}) {sentence} --> {classifier.classify(dict([token, True] for token in custom_tokens))}")
-                # data.write(" ")
+                data.write(f"\n{num_file+1}. {sentence} --> {classifier.classify(dict([token, True] for token in custom_tokens))}")
             num_file+=1
             content_try_store.update({sentence:classifier.classify(dict([token, True] for token in custom_tokens))})
 

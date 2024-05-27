@@ -1,5 +1,5 @@
 
-2024-05-27 12:32:36.184746
-1) you should visit america --> Positive
-2) you should not visit america --> Positive
-3) visit america --> Positive
+2024-05-27 20:34:01.945666
+1) sperm --> Negative
+2) bad --> Negative
+3) good --> Positive
