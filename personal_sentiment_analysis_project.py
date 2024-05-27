@@ -29,16 +29,16 @@ def try_again():
             # @[A-Za-z0-9_] removes @
             # #[A-Za-z0-9_] removes #
             # https?://\S+ removes links
-            #dictionary sorter using if-else for quick efficiency
-            if tag.startswith("NN"): #nouns
+            # dictionary sorter using if-else for quick efficiency
+            if tag.startswith("NN"): # nouns
                 pos = 'n'
-            elif tag.startswith('VB'): #verbs
+            elif tag.startswith('VB'): # verbs
                 pos = 'v'
-            elif tag.startswith('JJ'): #adjectives
+            elif tag.startswith('JJ'): # adjectives
                 pos = 'a'
-            elif tag.startswith('RB'): #adverbs
+            elif tag.startswith('RB'): # adverbs
                 pos = 'r'
-            else: #if no match then adjectives default
+            else: # if no match then adjectives default
                 pos = 'a'
 
             lemmatizer = WordNetLemmatizer()
@@ -154,22 +154,30 @@ def try_again():
 
         return positive_opinion_lexicon_data, negative_opinion_lexicon_data
 
-    if (__name__ == "__main__"):
+    if (True): # __name__ == "__main__"
 
         twitter_positive_cleansed_tokens, twitter_negative_cleansed_tokens = preprocess_twitter_X()
+
         gutenberg_positive_cleansed_tokens, gutenberg_negative_cleansed_tokens = preprocess_gutenberg()
+
         movie_positive_cleansed_tokens, movie_negative_cleansed_tokens = preprocess_movie_reviews()
+
         reuters_positive_cleansed_tokens, reuters_negative_cleansed_tokens = preprocess_reuters_reviews()
+
         opinion_lexicon_positive_cleansed_tokens, opinion_lexicon_negative_cleansed_tokens = preprocess_opinion_lexicon()
 
         positive_cleansed_tokens_list.extend(twitter_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(twitter_negative_cleansed_tokens)
+
         positive_cleansed_tokens_list.extend(gutenberg_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(gutenberg_negative_cleansed_tokens)
+
         positive_cleansed_tokens_list.extend(movie_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(movie_negative_cleansed_tokens)
+
         positive_cleansed_tokens_list.extend(reuters_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(reuters_negative_cleansed_tokens)
+
         positive_cleansed_tokens_list.extend(opinion_lexicon_positive_cleansed_tokens)
         negative_cleansed_tokens_list.extend(opinion_lexicon_negative_cleansed_tokens)
 
@@ -191,20 +199,19 @@ def try_again():
         positive_tokens_for_model = get_tweets_for_model(positive_cleansed_tokens_list)
         negative_tokens_for_model = get_tweets_for_model(negative_cleansed_tokens_list)
 
-        positive_dataset = [(tweet_dict, "Positive")
-                            for tweet_dict in positive_tokens_for_model]
-
-        negative_dataset = [(tweet_dict, "Negative")
-                            for tweet_dict in negative_tokens_for_model]
+        positive_dataset = [(tweet_dict, "Positive") for tweet_dict in positive_tokens_for_model]
+        negative_dataset = [(tweet_dict, "Negative") for tweet_dict in negative_tokens_for_model]
 
         dataset = positive_dataset + negative_dataset
 
+        # used random modules shuffle function to jumble the dataset values with same size as initially it was
         random.shuffle(dataset)
 
         # slice the dataset for faster comparisons as dataset is now smaller
-        # 80:20 ratio is best for optimal accuracy
-        size_data = len(dataset)
-        dataset = dataset[0:size_data]
+        # 80:20 ratio is  for optimal accuracy
+        # 93:7 ratio is  for best accuracy
+        desired_size_data = len(dataset)
+        dataset = dataset[0:desired_size_data]
         size_data = len(dataset)
         ratio_data = 0.93
         index_data = int(size_data*(ratio_data))
@@ -213,11 +220,13 @@ def try_again():
 
         classifier = NaiveBayesClassifier.train(train_data)
 
+        # size of dataset, accuracy, and some most informative features
         print(" ")
         print(f"Size of dataset taken is {size_data}")
         print("Accuracy is:", classify.accuracy(classifier, test_data))
         (classifier.show_most_informative_features(10))
 
+        # taking input from end_user how about how many texts to be entered and what those texts are 
         user_sentences=[]
         user_sentences_number = int(input("\nEnter number of desired sentences you want to check whether they are positive or negative: "))
         print(" ")
@@ -226,11 +235,11 @@ def try_again():
             sentence_input=str(input(f"{num+1}."))
             user_sentences.append(sentence_input)
 
-        #current date time in text file
+        # current date time in text file
         with open(file="sentiment_analysis_data.txt",mode="a") as data:
                 data.write(f"\n{datetime.datetime.now()}")
 
-        #remove noise classify data and various other comparissions and final output with results
+        # remove noise classify data and various other comparissions and final output with results
         num_file=0
         for sentence in user_sentences:
             custom_tokens = remove_noise(word_tokenize(sentence))
