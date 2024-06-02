@@ -13,6 +13,7 @@ import re, string, random
 from prettytable import PrettyTable
 from project_code_logos import logo2
 import timeit, datetime
+import matplotlib.pyplot as plt 
 
 # main source-code
 def try_again():
@@ -60,6 +61,20 @@ def try_again():
     def get_data_for_model(cleansed_tokens_list):
         for data_tokens in cleansed_tokens_list:
             yield dict([token, True] for token in data_tokens)
+
+    #showing the bar plot of size of each content seperated or frequency
+    def matplotsize(positive_dataset,negative_dataset):
+        barsentisize={"Positive":len(positive_dataset),"Neagtive":len(negative_dataset)}
+        barsenti=list(barsentisize.keys())
+        barsize=list(barsentisize.values())
+        plt.figure(figsize=(5,5))
+        for index, value in enumerate(barsize):
+            plt.text(index,(value+125),str(value),ha="center")
+        plt.bar(barsenti,barsize,color="aqua",width=.9,align="center",edgecolor="navy")
+        plt.xlabel("Sentiments")
+        plt.ylabel("Size of Dataset of each Sentiment")
+        plt.title("Sentiment Distribution Within the Dataset")
+        plt.show()
 
     # defining Twitter_samples corpus and using appropiate rules and functions to extract desired data from it
     def preprocess_twitter_X():
@@ -204,7 +219,7 @@ def try_again():
         # freq_dist_pos = FreqDist(all_pos_words)
         ptext = nltk.Text(all_pos_words)
         freq_dist_pos = ptext.vocab()
-        print(freq_dist_pos.most_common(30))
+        print(f"\n{freq_dist_pos.most_common(30)}")
 
         print(" ")
 
@@ -212,7 +227,7 @@ def try_again():
         # freq_dist_neg = FreqDist(all_neg_words)
         ntext = nltk.Text(all_neg_words)
         freq_dist_neg = ntext.vocab()
-        print(freq_dist_neg.most_common(30))
+        print(f"{freq_dist_neg.most_common(30)}")
 
         # positive_tokens_for_model is assumed to be an iterable containing dictionaries where each dictionary represents a tokenized piece of text data, with each token as a key and True as its value
         positive_tokens_for_model = get_data_for_model(positive_cleansed_tokens_list)
@@ -224,6 +239,9 @@ def try_again():
 
         # combining both the sentiment_dataset
         dataset =(positive_dataset + negative_dataset)
+
+        # plotting size of positive and negative dataset
+        matplotsize(positive_dataset,negative_dataset)
 
         # used random modules shuffle function to jumble the dataset values with same size as initially it was
         random.shuffle(dataset)
@@ -267,13 +285,22 @@ def try_again():
         # remove noise classify data and various other comparissions and final output with results
         num_file=0
         for sentence in user_sentences:
+            temp_store=[]
             custom_tokens = remove_noise(word_tokenize(sentence))
+            #probability distribution
+            probab_dist=classifier.prob_classify(dict([token, True] for token in custom_tokens))
+            senti_obj_prob=probab_dist.max()#whether positive or negative
+            probability=round(probab_dist.prob(senti_obj_prob),2)
+            # print to user sentence, sentiment, score of probablity
             print(f"\nSentence:--> {sentence}")
             print(f"Sentiment Type:--> {classifier.classify(dict([token, True] for token in custom_tokens))}")
-            with open(file="sentiment_analysis_data.txt",mode="a") as data:
-                data.write(f"\n{num_file+1}. {sentence} --> {classifier.classify(dict([token, True] for token in custom_tokens))}")
+            print(f"Sentiment Score or Probability:--> {probability}")
+            with open(file="data_collection.txt",mode="a") as data:
+                data.write(f"\n{num_file+1}) {sentence} --> {classifier.classify(dict([token, True] for token in custom_tokens))}")
+                data.write(f"\nScore --> {probability} ")
             num_file+=1
-            content_try_store.update({sentence:classifier.classify(dict([token, True] for token in custom_tokens))})
+            temp_store.append([sentence,classifier.classify(dict([token, True] for token in custom_tokens)),probability])
+            content_try_store.extend(temp_store)
 
 # printing the beginning of project logos etc
 print(logo2)
@@ -281,9 +308,9 @@ print(logo2)
 # with open(file="sentiment_analysis_data.txt",mode="a") as data:
 #                 data.write(f"Collection of data by end-users\n")
 # initialissing values of various variables to store data
-table = PrettyTable(["Sno","Sentence","Sentiment"])
+table = PrettyTable(["Sno","Sentence","Sentiment","Score"])
 table_time = PrettyTable(["Execution_Number","Time_Taken (Minutes)"])
-content_try_store={}
+content_try_store=[]
 run_timer=[]
 # using while loop to increase user interactions and faster and easy accessibility
 condition= True
@@ -306,16 +333,29 @@ while(condition):
         get_sentiment=input("\nEnter sentiments you want to print table of (positive,negative,all): ")
         print("\nAll your searches and their results from today are displayed below -->")
         num=1
-        for sentence,sentiment in content_try_store.items():
-            if((get_sentiment=="positive") and ((sentiment.lower())=="positive")):
-                table.add_row([num,sentence,sentiment])
-            elif((get_sentiment=="negative") and ((sentiment.lower())=="negative")):
-                table.add_row([num,sentence,sentiment])
+        for content in content_try_store:
+            if((get_sentiment=="positive") and ((content[1].lower())=="positive")):
+                table.add_row([num,content[0],content[1],content[2]])
+            elif((get_sentiment=="negative") and ((content[1].lower())=="negative")):
+                table.add_row([num,content[0],content[1],content[2]])
             elif(get_sentiment == "all"):
-                table.add_row([num, sentence, sentiment])
+                table.add_row([num,content[0],content[1],content[2]])
             num+=1
         table.align='l'
         print(table)
+        # initialsing for pie chart
+        pie_val=[]
+        pie_color=["green","red"]
+        pie_sent=["positive","negative"]
+        sumpos=0
+        sumneg=0
+        for content in content_try_store:
+            if(content[1].lower()=="positive"):
+                sumpos+=content[2]
+            elif(content[1].lower()=="negative"):
+                sumneg+=content[2]
+        pie_val.append(sumpos)
+        pie_val.append(sumneg)
         # table for time of execution of each run
         print("\nAll your runtimes for each of the executions from today are displayed below -->")
         num_t=1
@@ -324,9 +364,18 @@ while(condition):
             num_t+=1
         table_time.align='l'
         print(table_time)
-        # resetting values of content_try_store, run_timer
-        content_try_store={}
+        # plotting pie chart
+        plt.figure(figsize=(5,5))
+        plt.pie(pie_val,labels=pie_sent,autopct="%0.2f%%",colors=pie_color,radius=1,labeldistance=1.2,textprops={"fontsize": 10})
+        plt.title("Sentiments Distribution from today's searches")
+        plt.show()
+        # resetting values of content_try_store, run_timer, pie_val, pie_num
+        pie_val=[]
+        pie_num=[]
+        content_try_store=[]
         run_timer=[]
+        sumpos=0
+        sumneg=0
         # ending message and thankyou
         print("\nThank you for visiting hope you are satisfied with our Sentiment Analyser project")
         print("\t\t\t😎 ^_^ ^_^ ^_^ 😎\n")
