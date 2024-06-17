@@ -280,7 +280,7 @@ def try_again():
             user_sentences.append(sentence_input)
 
         # current date time in text file
-        with open(file="sentiment_analysis_data.txt",mode="a") as data:
+        with open(file="data_collection.txt",mode="a") as data:
                 data.write(f"\nUserName -->{user_name}\n{datetime.datetime.now()}")
 
         # remove noise classify data and various other comparissions and final output with results

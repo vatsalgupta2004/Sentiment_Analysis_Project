@@ -1,0 +1,66 @@
+UserName -->Vatsal Gupta
+2024-06-17 19:49:15.406782
+1) Missed my workout today and feeling a bit down. Need to get back on track. #fitness --> Positive
+Score --> 0.56 
+2) The fabric of the shirt is so soft and comfortable. Absolutely love it! --> Positive
+Score --> 0.87 
+3) The vacuum cleaner is lightweight and works perfectly. Very happy with my purchase. --> Positive
+Score --> 0.92 
+4) Just had the best meal at this new restaurant downtown. Highly recommend! #foodie --> Positive
+Score --> 0.97 
+5) The vacuum cleaner is lightweight and works perfectly. Very happy with my purchase --> Positive
+Score --> 0.92 
+6) Ugh, my flight got delayed again. So frustrating. #annoyed --> Negative
+Score --> 0.98 
+1) Just finished the new season of my favorite show and it was amazing! #happy --> Positive
+Score --> 0.85 
+2) Loving the new updates on this app, makes my life so much easier! #tech --> Positive
+Score --> 0.89 
+3) Ugh, my flight got delayed again. So frustrating. #annoyed --> Negative
+Score --> 0.98 
+4) Traffic was terrible this morning, made me late for an important meeting. #stress --> Negative
+Score --> 0.67 
+5) Enjoying a beautiful sunset at the beach. Life is good. #bliss --> Negative
+Score --> 0.72 
+1) Just finished the new season of my favorite show and it was amazing! #happy --> Positive
+Score --> 0.84 
+2) The laptop I bought last week is fantastic! Super fast and lightweight. --> Negative
+Score --> 0.57 
+3) Ugh, my flight got delayed again. So frustrating. #annoyed --> Negative
+Score --> 0.98 
+4) This blender broke after just one use. Completely useless. --> Negative
+Score --> 0.78 
+5) Loving the new updates on this app, makes my life so much easier! #tech --> Positive
+Score --> 0.88 
+6) The shoes are extremely comfortable and stylish. Highly recommend! --> Positive
+Score --> 0.97 
+7) I can't believe I lost my wallet today. Worst day ever. #sad --> Negative
+Score --> 0.98 
+8) The camera quality is mediocre at best, not worth the price. --> Negative
+Score --> 0.52 
+9) Got a promotion at work today! Feeling so grateful and excited. #blessed --> Positive
+Score --> 0.55 
+10) This phone case is very durable and looks great. Love it! --> Negative
+Score --> 0.72 
+11) Traffic was terrible this morning, made me late for an important meeting. #stress --> Negative
+Score --> 0.69 
+12) The headphones stopped working after a month, very disappointed. --> Positive
+Score --> 0.57 
+13) Just had the best meal at this new restaurant downtown. Highly recommend! #foodie --> Positive
+Score --> 0.95 
+14) The book arrived with a torn cover, very unhappy with the purchase. --> Positive
+Score --> 0.89 
+15) Enjoying a beautiful sunset at the beach. Life is good. #bliss --> Negative
+Score --> 0.8 
+16) This coffee maker is easy to use and makes great coffee. Perfect start to my day! --> Positive
+Score --> 0.78 
+17) Missed my workout today and feeling a bit down. Need to get back on track. #fitness --> Negative
+Score --> 0.69 
+18) The fabric of the shirt is so soft and comfortable. Absolutely love it! --> Positive
+Score --> 0.81 
+19) Just watched a terrible movie, such a waste of time. #disappointed --> Negative
+Score --> 0.96 
+20) The vacuum cleaner is lightweight and works perfectly. Very happy with my purchase --> Positive
+Score --> 0.96 
+21) The restaurant had a unique ambiance, but the food was just okay. Not sure if I'd go back. --> Positive
+Score --> 0.89 
