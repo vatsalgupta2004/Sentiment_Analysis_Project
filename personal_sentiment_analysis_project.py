@@ -270,6 +270,7 @@ def try_again():
         (classifier.show_most_informative_features(30))
 
         # taking input from end_user how about how many texts to be entered and what those texts are 
+        user_name=input("\nEnter your name -->")
         user_sentences=[]
         user_sentences_number = int(input("\nEnter number of desired sentences you want to check whether they are positive or negative: "))
         print(" ")
@@ -280,7 +281,7 @@ def try_again():
 
         # current date time in text file
         with open(file="sentiment_analysis_data.txt",mode="a") as data:
-                data.write(f"\n{datetime.datetime.now()}")
+                data.write(f"\nUserName -->{user_name}\n{datetime.datetime.now()}")
 
         # remove noise classify data and various other comparissions and final output with results
         num_file=0
@@ -303,6 +304,17 @@ def try_again():
             content_try_store.extend(temp_store)
 
 # printing the beginning of project logos etc
+logo2='''
+
+   _____            _   _                      _                           _                    
+  / ____|          | | (_)                    | |        /\               | |                   
+ | (___   ___ _ __ | |_ _ _ __ ___   ___ _ __ | |_      /  \   _ __   __ _| |_   _ _______ _ __ 
+  \___ \ / _ \ '_ \| __| | '_ ` _ \ / _ \ '_ \| __|    / /\ \ | '_ \ / _` | | | | |_  / _ \ '__|
+  ____) |  __/ | | | |_| | | | | | |  __/ | | | |_    / ____ \| | | | (_| | | |_| |/ /  __/ |   
+ |_____/ \___|_| |_|\__|_|_| |_| |_|\___|_| |_|\__|  /_/    \_\_| |_|\__,_|_|\__, /___\___|_|   
+                                                                              __/ |             
+                                                                             |___/              
+'''
 print(logo2)
 # data written into file 
 # with open(file="sentiment_analysis_data.txt",mode="a") as data:
@@ -330,9 +342,10 @@ while(condition):
     else:
         condition= False
         # table for details of sentences and their sentiments respectively
-        get_sentiment=input("\nEnter sentiments you want to print table of (positive,negative,all): ")
+        get_sentiment=(input("Enter sentiments you want to print table of (positive,negative,all): ").lower())
         print("\nAll your searches and their results from today are displayed below -->")
         num=1
+
         for content in content_try_store:
             if((get_sentiment=="positive") and ((content[1].lower())=="positive")):
                 table.add_row([num,content[0],content[1],content[2]])
@@ -356,6 +369,7 @@ while(condition):
                 sumneg+=content[2]
         pie_val.append(sumpos)
         pie_val.append(sumneg)
+
         # table for time of execution of each run
         print("\nAll your runtimes for each of the executions from today are displayed below -->")
         num_t=1
@@ -366,14 +380,14 @@ while(condition):
         print(table_time)
         # plotting pie chart
         plt.figure(figsize=(5,5))
-        plt.pie(pie_val,labels=pie_sent,autopct="%0.2f%%",colors=pie_color,radius=1,labeldistance=1.2,textprops={"fontsize": 10})
-        plt.title("Sentiments Distribution from today's searches")
+        plt.pie(pie_val,labels=pie_sent,autopct="%0.2f%%",colors=pie_color,radius=1,labeldistance=1.1,textprops={"fontsize": 10},startangle=-45)
+        plt.title("Sentiments Distribution from all today's searches")
         plt.show()
-        # resetting values of content_try_store, run_timer, pie_val, pie_num
+        # resetting values of content_try_store, run_timer, pie_val, pie_sent
         pie_val=[]
-        pie_num=[]
         content_try_store=[]
         run_timer=[]
+        pie_sent=[]
         sumpos=0
         sumneg=0
         # ending message and thankyou

@@ -1,5 +1,0 @@
-
-2024-05-27 20:34:01.945666
-1) sperm --> Negative
-2) bad --> Negative
-3) good --> Positive
